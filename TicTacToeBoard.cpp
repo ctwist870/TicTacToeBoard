@@ -44,7 +44,19 @@ Piece TicTacToeBoard::toggleTurn()
 **/ 
 Piece TicTacToeBoard::placePiece(int row, int column)
 {
-  return Invalid;
+  if(row > 2 || column > 2 || row < 0 || column < 0)
+      return Invalid;
+  if(board[row][column] == Blank)
+  {
+      board[row][column] = turn;
+      toggleTurn();
+      return board[row][column];
+  }
+  if(board[row][column] != Blank)
+  {
+    toggleTurn();
+    return board[row][column];
+  }
 }
 
 /**
@@ -53,7 +65,10 @@ Piece TicTacToeBoard::placePiece(int row, int column)
 **/
 Piece TicTacToeBoard::getPiece(int row, int column)
 {
-  return Invalid;
+  if(row > 2 || column > 2 || row < 0 || column < 0)
+      return Invalid;
+      
+  return board[row][column];
 }
 
 /**
@@ -62,5 +77,41 @@ Piece TicTacToeBoard::getPiece(int row, int column)
 **/
 Piece TicTacToeBoard::getWinner()
 {
-  return Invalid;
+  Piece cur;
+  int horiz_sequence=1;
+  int vert_sequence=1;
+  int diag_sequence=1;
+  bool filled = true;
+  for(int i=0; i<3; i++)
+  {
+      if(board[i][0] != Blank)
+      {
+      cur = board[i][0];
+      for(int j=1; j<3; j++)
+      {
+          if(board[i][j] == Blank || board[j][i] == Blank)
+              filled = false;
+          if(board[i][j] == cur)
+              horiz_sequence++;
+          if(board[j][i] == cur)
+              vert_sequence++;
+          
+      }
+      if(i == 0 && (board[1][1] == cur && board[2][2] == cur))
+          return cur;
+      if(i == 2 && (board[1][1] == cur && board[2][0] == cur))
+          return cur;
+      if(horiz_sequence == 3 || vert_sequence == 3 || diag_sequence == 3)
+          return cur;
+      horiz_sequence = 1;
+      vert_sequence = 1;
+      diag_sequence = 1;
+      }
+      else
+          filled = false;
+  }
+  if(filled)
+      return Blank;
+  else
+      return Invalid;
 }
